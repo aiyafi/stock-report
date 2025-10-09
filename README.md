@@ -1,61 +1,320 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Stock Report Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern web application built with Laravel and React for managing coffee shop/barista operations, including stock reporting, shift scheduling, and multi-outlet management.
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Core Features
+- **Stock Reporting System** - Baristas can report inventory status for various items
+- **Multi-Outlet Support** - Manage multiple locations (Warehouse, Outlet A, Outlet B)
+- **Role-Based Access Control** - Different permissions for Manager and Staff roles
+- **Real-time Clock Display** - Live timestamp for accurate reporting
+- **Interactive Dashboard** - Manager overview and staff management
+- **Shift Scheduling** - Built-in shift management system
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Stock Management
+- **Inventory Tracking** - Monitor stock levels for coffee shop essentials
+- **Status Reporting** - Mark items as "Ready" or "Habis" (Out of Stock)
+- **Action Alerts** - Flag items as "Hampir Habis" (Almost Out)
+- **Report Generation** - Generate detailed stock reports with timestamps
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### User Management
+- **Authentication** - Secure login system with Laravel Sanctum
+- **User Roles** - Manager and Staff role differentiation
+- **Profile Management** - User profile editing capabilities
 
-## Learning Laravel
+## 🛠 Technology Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Backend
+- **Laravel 12** - PHP web framework
+- **Inertia.js** - Modern monolithic SPA approach
+- **Laravel Sanctum** - API authentication
+- **MySQL** - Database management
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Frontend
+- **React 18** - User interface library
+- **Tailwind CSS** - Utility-first CSS framework
+- **Vite** - Fast build tool and dev server
+- **Headless UI** - Accessible UI components
+- **Lucide React** - Beautiful icon library
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Development Tools
+- **Composer** - PHP dependency management
+- **NPM/PNPM** - Node.js package management
+- **Laravel Sail** - Docker development environment
+- **Laravel Pint** - PHP code style fixer
 
-## Laravel Sponsors
+## 📋 Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Before running this application, make sure you have the following installed:
 
-### Premium Partners
+- **PHP 8.2 or higher**
+- **Composer** - PHP dependency manager
+- **Node.js 18+** and **npm** or **pnpm**
+- **MySQL** - Database server
+- **Git** - Version control system
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🚀 Installation
 
-## Contributing
+### 1. Clone the Repository
+```bash
+git clone <your-repository-url>
+cd stock-report
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 2. Install PHP Dependencies
+```bash
+composer install
+```
 
-## Code of Conduct
+### 3. Install Node.js Dependencies
+```bash
+npm install
+# or
+pnpm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Environment Configuration
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+Update your `.env` file with the appropriate database credentials:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. Generate Application Key
+```bash
+php artisan key:generate
+```
 
-## License
+### 6. Database Setup
+```bash
+# Run migrations
+php artisan migrate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Seed the database (optional)
+php artisan db:seed
+```
+
+### 7. Import Existing Database (if available)
+If you have an existing SQL file with your data:
+```bash
+mysql -u your_username -p your_database_name < database/your_sql_file.sql
+```
+
+### 8. Build Assets
+```bash
+npm run build
+# or for development
+npm run dev
+```
+
+## 🎯 Usage
+
+### Starting the Application
+
+#### Using Laravel Sail (Recommended)
+```bash
+./vendor/bin/sail up -d
+./vendor/bin/sail npm run dev
+```
+
+#### Using PHP's Built-in Server
+```bash
+# Terminal 1 - Start Laravel server
+php artisan serve
+
+# Terminal 2 - Start Vite dev server
+npm run dev
+
+# Terminal 3 - Queue worker (optional)
+php artisan queue:work
+
+# Terminal 4 - Laravel Pail (optional)
+php artisan pail
+```
+
+### Accessing the Application
+
+1. **Homepage**: http://127.0.0.1:8000
+2. **Dashboard** (Manager only): http://127.0.0.1:8000/dashboard
+
+### Default Users
+
+Based on your database setup, you can use these credentials:
+
+- **Manager**: manager@gmail.com
+- **Staff**: staff@gmail.com
+
+## 📊 Database Schema
+
+### Main Tables
+- **users** - User accounts with roles (Manager/Staff)
+- **jadwal_shift** - Shift scheduling data
+- **jam_shift** - Shift time configurations
+- **kesediaan** - Staff availability data
+- **periode_gaji** - Payroll period management
+- **tipe_pekerjaan** - Job type classifications
+
+### Laravel System Tables
+- **sessions** - User session management
+- **cache** - Application caching
+- **jobs** - Background job processing
+- **migrations** - Database version control
+
+## 👥 User Roles & Permissions
+
+### Manager Role
+- Access to dashboard
+- View all reports
+- Manage staff schedules
+- Generate comprehensive reports
+
+### Staff Role
+- Create stock reports
+- Update inventory status
+- View personal reports
+- Limited to assigned outlet
+
+## 🔧 Configuration
+
+### Environment Variables
+```env
+# Application
+APP_NAME="Stock Report"
+APP_URL=http://localhost:8000
+
+# Database
+DB_CONNECTION=mysql
+DB_DATABASE=your_database
+
+# Session & Cache
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+```
+
+### Available Commands
+
+```bash
+# Development
+php artisan serve          # Start development server
+npm run dev               # Start Vite dev server
+npm run build             # Build for production
+
+# Database
+php artisan migrate       # Run migrations
+php artisan migrate:fresh # Fresh migration with seed
+php artisan db:seed       # Seed database
+
+# Testing
+php artisan test          # Run tests
+php artisan pint          # Fix code style
+
+# Queue & Jobs
+php artisan queue:work    # Process queued jobs
+php artisan pail         # Monitor application logs
+```
+
+## 🎨 Customization
+
+### Adding New Stock Items
+Edit `resources/js/Pages/StockReport.jsx` and add items to the `stockItems` array:
+
+```javascript
+const [stockItems, setStockItems] = useState([
+    { id: 1, name: 'Espresso Beans', status: 'Ready', action: null },
+    { id: 2, name: 'Your New Item', status: 'Ready', action: null },
+    // ... other items
+]);
+```
+
+### Styling
+The application uses Tailwind CSS. Customize styles in:
+- `resources/css/app.css` - Main stylesheet
+- `tailwind.config.js` - Tailwind configuration
+
+### Adding New Outlets
+Update the outlet options in:
+- `resources/js/Pages/Welcome.jsx` (outlets array)
+- `resources/js/Pages/StockReport.jsx` (outlet select options)
+
+## 🔒 Security Features
+
+- **CSRF Protection** - Laravel's built-in CSRF protection
+- **Input Sanitization** - All user inputs are sanitized
+- **Role-Based Access** - Secure route protection
+- **Session Management** - Secure session handling
+- **Password Hashing** - Bcrypt password hashing
+
+## 🚨 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Errors**
+   - Verify your `.env` database credentials
+   - Ensure MySQL server is running
+   - Check database user permissions
+
+2. **Asset Compilation Issues**
+   ```bash
+   rm -rf node_modules package-lock.json
+   npm install
+   npm run dev
+   ```
+
+3. **Permission Issues**
+   ```bash
+   chmod -R 755 storage bootstrap/cache
+   php artisan config:clear
+   php artisan cache:clear
+   ```
+
+## 📝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Style
+- Follow PSR-12 PHP coding standards
+- Use Laravel Pint for code formatting: `php artisan pint`
+- ESLint for JavaScript/React code
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+For support and questions:
+- Create an issue in the repository
+- Check existing documentation
+- Review Laravel and React documentation
+
+## 🔄 Updates
+
+### Version History
+- **v1.0.0** - Initial release with stock reporting functionality
+- **v1.1.0** - Added shift scheduling system
+- **v1.2.0** - Enhanced UI/UX with real-time features
+
+### Migration from Previous Versions
+```bash
+php artisan migrate
+npm install
+npm run build
+```
+
+---
+
+**Made with ❤️ using Laravel & React by [K9Fox](https://yafff.tech/)**
