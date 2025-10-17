@@ -1,31 +1,56 @@
-import { Head } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import { Head } from "@inertiajs/react";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
-export default function StockReport({ selectedOutlet = 'Herald City' }) {
+const STATUS_MAP = {
+    READY: {
+        label: "Ready",
+        style: "border-green-300 bg-green-50 text-green-700",
+        badge: "bg-green-100 text-green-700",
+    },
+    ALMOST_OUT: {
+        label: "Hampir Habis",
+        style: "border-yellow-300 bg-yellow-50 text-yellow-700",
+        badge: "bg-yellow-100 text-yellow-700",
+    },
+    OUT: {
+        label: "Habis",
+        style: "border-red-300 bg-red-50 text-red-700",
+        badge: "bg-red-100 text-red-700",
+    },
+};
+
+export default function StockReport({
+    selectedOutlet = "",
+    stockItems: initialStockItems = [],
+}) {
     const [currentTime, setCurrentTime] = useState(new Date());
     const [formData, setFormData] = useState({
-        outlet: selectedOutlet,
-        baristaName: '',
-        date: new Date().toISOString().split('T')[0],
+        outlet: selectedOutlet || "",
+        baristaName: "",
+        date: new Date().toISOString().split("T")[0],
     });
+    const [stockItems, setStockItems] = useState(() =>
+        initialStockItems.map((item) => ({
+            ...item,
+            action: null,
+        })),
+    );
 
-    // Sample stock items with initial status
-    const [stockItems, setStockItems] = useState([
-        { id: 1, name: 'Espresso Beans', status: 'Ready', action: null },
-        { id: 2, name: 'Milk', status: 'Ready', action: null },
-        { id: 3, name: 'Sugar', status: 'Ready', action: null },
-        { id: 4, name: 'Caramel Syrup', status: 'Ready', action: null },
-        { id: 5, name: 'Vanilla Syrup', status: 'Ready', action: null },
-        { id: 6, name: 'Chocolate Powder', status: 'Ready', action: null },
-        { id: 7, name: 'Whipped Cream', status: 'Ready', action: null },
-        { id: 8, name: 'Paper Cups', status: 'Ready', action: null },
-    ]);
-
-    // Update form data when selectedOutlet prop changes
+    // Sync outlet selection
     useEffect(() => {
-        setFormData(prev => ({ ...prev, outlet: selectedOutlet }));
+        setFormData((prev) => ({ ...prev, outlet: selectedOutlet || "" }));
     }, [selectedOutlet]);
+
+    // Sync stock data from server
+    useEffect(() => {
+        setStockItems(
+            initialStockItems.map((item) => ({
+                ...item,
+                action: null,
+            })),
+        );
+    }, [initialStockItems]);
 
     // Update clock every second
     useEffect(() => {
@@ -38,17 +63,12 @@ export default function StockReport({ selectedOutlet = 'Herald City' }) {
 
     // Format time for display
     const formatTime = (date) => {
-        return date.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
+        return date.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
             hour12: false,
         });
-    };
-
-    // Handle outlet change
-    const handleOutletChange = (e) => {
-        setFormData({ ...formData, outlet: e.target.value });
     };
 
     // Handle barista name change
@@ -61,23 +81,19 @@ export default function StockReport({ selectedOutlet = 'Herald City' }) {
         setFormData({ ...formData, date: e.target.value });
     };
 
-    // Handle status change
-    const handleStatusChange = (itemId, newStatus) => {
-        setStockItems(
-            stockItems.map((item) =>
-                item.id === itemId
-                    ? { ...item, status: newStatus, action: null }
-                    : item
-            )
-        );
-    };
-
-    // Handle action button click
+    // Handle action button click with toggle functionality
     const handleActionClick = (itemId, action) => {
-        setStockItems(
-            stockItems.map((item) =>
-                item.id === itemId ? { ...item, action } : item
-            )
+        setStockItems((items) =>
+            items.map((item) => {
+                if (item.id === itemId) {
+                    // Toggle: if the same action is clicked, unselect it
+                    return {
+                        ...item,
+                        action: item.action === action ? null : action,
+                    };
+                }
+                return item;
+            }),
         );
     };
 
@@ -90,23 +106,22 @@ export default function StockReport({ selectedOutlet = 'Herald City' }) {
             timestamp: currentTime.toISOString(),
             items: stockItems.map((item) => ({
                 barang: item.name,
-                status: item.status,
-                action: item.action || 'None',
+                status: STATUS_MAP[item.status]?.label ?? item.status,
+                action: item.action || "None",
             })),
         };
 
-        console.log('=== STOCK REPORT ===');
+        console.log("=== STOCK REPORT ===");
         console.log(JSON.stringify(reportData, null, 2));
-        console.log('===================');
+        console.log("===================");
     };
 
     return (
         <>
             <Head title="Barista Stock Report" />
-            
+
             <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-8 px-4">
                 <div className="max-w-5xl mx-auto">
-                    
                     {/* Header Section with Clock */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-6">
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -122,55 +137,6 @@ export default function StockReport({ selectedOutlet = 'Herald City' }) {
                                 <div className="text-3xl font-mono font-bold tracking-wider">
                                     {formatTime(currentTime)}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Form Section */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            
-                            {/* Nama Outlet */}
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Nama Outlet
-                                </label>
-                                <select
-                                    value={formData.outlet}
-                                    onChange={handleOutletChange}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none"
-                                >
-                                    <option value="Warehouse">Warehouse</option>
-                                    <option value="Outlet A">Outlet A</option>
-                                    <option value="Outlet B">Outlet B</option>
-                                </select>
-                            </div>
-
-                            {/* Nama Barista */}
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Nama Barista
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.baristaName}
-                                    onChange={handleBaristaNameChange}
-                                    placeholder="Nama Barista"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none"
-                                />
-                            </div>
-
-                            {/* Tanggal */}
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Tanggal
-                                </label>
-                                <input
-                                    type="date"
-                                    value={formData.date}
-                                    onChange={handleDateChange}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none"
-                                />
                             </div>
                         </div>
                     </div>
@@ -193,80 +159,92 @@ export default function StockReport({ selectedOutlet = 'Herald City' }) {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                    {stockItems.map((item) => (
-                                        <tr
-                                            key={item.id}
-                                            className="hover:bg-gray-50 transition-colors"
-                                        >
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">
-                                                    {item.name}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <select
-                                                    value={item.status}
-                                                    onChange={(e) =>
-                                                        handleStatusChange(
-                                                            item.id,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    className={cn(
-                                                        "px-3 py-2 border rounded-lg text-sm font-medium transition-all outline-none",
-                                                        item.status === 'Ready'
-                                                            ? 'border-green-300 bg-green-50 text-green-700 focus:ring-2 focus:ring-green-500'
-                                                            : 'border-red-300 bg-red-50 text-red-700 focus:ring-2 focus:ring-red-500'
-                                                    )}
-                                                >
-                                                    <option value="Ready">Ready</option>
-                                                    <option value="Habis">Habis</option>
-                                                </select>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() =>
-                                                            handleActionClick(
-                                                                item.id,
-                                                                'Hampir Habis'
-                                                            )
-                                                        }
-                                                        disabled={item.status === 'Habis'}
+                                    {stockItems.map((item) => {
+                                        const statusMeta = STATUS_MAP[
+                                            item.status
+                                        ] || {
+                                            label: item.status,
+                                            badge: "bg-gray-100 text-gray-700",
+                                        };
+
+                                        return (
+                                            <tr
+                                                key={item.id}
+                                                className="hover:bg-gray-50 transition-colors"
+                                            >
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-gray-900">
+                                                        {item.name}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span
                                                         className={cn(
-                                                            "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                                                            item.status === 'Habis'
-                                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                                                : item.action === 'Hampir Habis'
-                                                                ? 'bg-yellow-500 text-white shadow-md'
-                                                                : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 hover:shadow-md'
+                                                            "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium",
+                                                            statusMeta.badge,
                                                         )}
                                                     >
-                                                        Hampir Habis
-                                                    </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleActionClick(
-                                                                item.id,
-                                                                'Habis'
-                                                            )
-                                                        }
-                                                        disabled={item.status === 'Habis'}
-                                                        className={cn(
-                                                            "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                                                            item.status === 'Habis'
-                                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                                                : item.action === 'Habis'
-                                                                ? 'bg-red-500 text-white shadow-md'
-                                                                : 'bg-red-100 text-red-700 hover:bg-red-200 hover:shadow-md'
-                                                        )}
-                                                    >
-                                                        Habis
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                        {statusMeta.label}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex gap-2">
+                                                        {/* Hampir Habis Button */}
+                                                        <button
+                                                            onClick={() =>
+                                                                handleActionClick(
+                                                                    item.id,
+                                                                    "Hampir Habis",
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                item.status ===
+                                                                "OUT"
+                                                            }
+                                                            className={cn(
+                                                                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                                                                item.status ===
+                                                                    "OUT"
+                                                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                                    : item.action ===
+                                                                        "Hampir Habis"
+                                                                      ? "bg-yellow-500 text-white shadow-md ring-2 ring-yellow-300"
+                                                                      : "bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-md",
+                                                            )}
+                                                        >
+                                                            Hampir Habis
+                                                        </button>
+
+                                                        {/* Habis Button */}
+                                                        <button
+                                                            onClick={() =>
+                                                                handleActionClick(
+                                                                    item.id,
+                                                                    "Habis",
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                item.status ===
+                                                                "OUT"
+                                                            }
+                                                            className={cn(
+                                                                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                                                                item.status ===
+                                                                    "OUT"
+                                                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                                    : item.action ===
+                                                                        "Habis"
+                                                                      ? "bg-red-500 text-white shadow-md ring-2 ring-red-300"
+                                                                      : "bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-md",
+                                                            )}
+                                                        >
+                                                            Habis
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>

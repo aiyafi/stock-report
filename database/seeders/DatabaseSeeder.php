@@ -13,6 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed stock reporting system tables
+        $this->call([
+            KategoriSeeder::class,
+            OutletSeeder::class,
+            ItemSeeder::class,
+            ItemOutletOwnershipSeeder::class,
+        ]);
+
         // User::factory(10)->create();
 
         User::factory()->create([

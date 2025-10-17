@@ -33,7 +33,22 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Check user role after authentication
+        $user = Auth::user();
+        
+        // Only allow Manager role to proceed
+        if ($user && strtolower($user->role) === 'manager') {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+        
+        // For staff or other roles, logout and redirect back to login with error
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('login')->withErrors([
+            'email' => 'Access denied. Only Managers can access the system.',
+        ]);
     }
 
     /**
